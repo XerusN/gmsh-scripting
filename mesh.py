@@ -109,7 +109,7 @@ H = 2*DIAMETER
 cyl_pos = [(0, 0)]
 for i in range(1, 5):
    cyl_pos.append((i*L, i*H))
-   cyl_pos.append((-i*L, -i*H))
+   cyl_pos.append((i*L, -i*H))
 V_SETUP_D = Config(cyl_pos, "meshes/cyl_v_setup_d.msh")
 
 def run():
