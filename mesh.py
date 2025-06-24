@@ -16,8 +16,6 @@ REFINEMENT_SIZE = DIAMETER
 REFINEMENT_DOWNSTREAM_SIZE = 4*DIAMETER
 REFINEMENT_MESH_SIZE = DIAMETER/8
 
-
-
 def mesh(cylinders_pos, out_path):
    """
    Method to create a mesh with multiple cylinders with a fixed diameter
@@ -33,6 +31,7 @@ def mesh(cylinders_pos, out_path):
 
    # Generate Geometry
    gmsh.initialize()
+   gmsh.clear()
 
    # External domain
    total_length = UPSTREAM_DIST + DOWNSTREAM_DIST
@@ -50,7 +49,10 @@ def mesh(cylinders_pos, out_path):
       # The fields need to be applied later
       fields.append(add_refinement_zone(xc, yc, total_length, REFINEMENT_SIZE*2, REFINEMENT_MESH_SIZE, GLOBAL_MESH_SIZE))
    apply_fields(fields)
+   gmsh.model.occ.synchronize()
 
+   if len(circles) == 6:
+      gmsh.fltk.run()
    # Surface generation
    closed_loops = [ext_domain]
    for circle in circles:
@@ -72,13 +74,52 @@ def mesh(cylinders_pos, out_path):
    gmsh.write(out_path)
 
    # Open user interface of GMSH
-   gmsh.fltk.run()
+   # gmsh.fltk.run()
 
    # Mesh file name and output
    gmsh.finalize()
 
-def main():
-   mesh([(0, 0), (DIAMETER, DIAMETER), (-2*DIAMETER, -2*DIAMETER)], 'meshes/cylinders.msh')
+
+class Config:
+   """
+   A class to represent the config for multiple cylinders
+   ...
+
+   Attributes
+   ----------
+   cyl_pos : [(x, y)]
+      positions of the cylinders, the first one should be in (0, 0), you should not exceed 20*D for x (no negative x is recommanded) and 20*D for abs(y)
+   path : str
+      file for the export of the mesh
+   """
+   def __init__(self, cyl_pos, path):
+      self.cyl_pos = cyl_pos
+      self.path = path
+
+LINE_1 = Config([(0, 0)], "meshes/cyl_line_1.msh")
+
+L = 2.5*DIAMETER
+H = 2.5*DIAMETER
+LINE_6 = Config([(i*L, 0) for i in range(6)], "meshes/cyl_line_6.msh")
+
+L = 2*DIAMETER
+H = 2*DIAMETER
+V_SETUP_B = Config([(((-1)**i)*i*L, ((-1)**i)*i*H) for i in range(6)], "meshes/cyl_v_setup_b.msh")
+
+L = 2*DIAMETER
+H = 2*DIAMETER
+cyl_pos = [(0, 0)]
+for i in range(1, 5):
+   cyl_pos.append((i*L, i*H))
+   cyl_pos.append((-i*L, -i*H))
+V_SETUP_D = Config(cyl_pos, "meshes/cyl_v_setup_d.msh")
+
+def run():
+
+   to_run = [LINE_1, LINE_6, V_SETUP_B, V_SETUP_D]
+
+   for config in to_run:
+      mesh(config.cyl_pos, config.path)
 
 if __name__ == "__main__":
-   main()
+   run()
