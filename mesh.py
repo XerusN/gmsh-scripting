@@ -51,8 +51,6 @@ def mesh(cylinders_pos, out_path):
    apply_fields(fields)
    gmsh.model.occ.synchronize()
 
-   if len(circles) == 6:
-      gmsh.fltk.run()
    # Surface generation
    closed_loops = [ext_domain]
    for circle in circles:
@@ -104,7 +102,7 @@ LINE_6 = Config([(i*L, 0) for i in range(6)], "meshes/cyl_line_6.msh")
 
 L = 2*DIAMETER
 H = 2*DIAMETER
-V_SETUP_B = Config([(((-1)**i)*i*L, ((-1)**i)*i*H) for i in range(6)], "meshes/cyl_v_setup_b.msh")
+V_SETUP_B = Config([(i*L, ((-1)**i)*i*H) for i in range(9)], "meshes/cyl_v_setup_b.msh")
 
 L = 2*DIAMETER
 H = 2*DIAMETER
