@@ -1,1 +1,2 @@
-./meshes/*
+./meshes/
+./__pycache__/
