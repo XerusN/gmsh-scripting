@@ -1,7 +1,7 @@
 import gmsh
 from geometry_def import (Circle, PlaneSurface, Rectangle, Point, add_refinement_zone, apply_fields, Config)
 
-def mesh(cylinders_pos, out_path):
+def mesh(cylinders_pos, out_path, params):
    """
    Method to create a mesh with multiple cylinders with a fixed diameter
    ...
@@ -65,7 +65,7 @@ def mesh(cylinders_pos, out_path):
 def run(params):
 
    for config in params.to_run:
-      mesh(config.cyl_pos, config.path)
+      mesh(config.cyl_pos, config.path, params)
 
 if __name__ == "__main__":
    import params
