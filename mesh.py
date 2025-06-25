@@ -7,14 +7,14 @@ DIAMETER = 0.01
 
 # Bounding box
 HEIGHT = 52*DIAMETER
-UPSTREAM_DIST = 10*DIAMETER
+UPSTREAM_DIST = 4*DIAMETER
 DOWNSTREAM_DIST = 46*DIAMETER
 GLOBAL_MESH_SIZE = DIAMETER*2
 
 # Refinement zone around the cylinder
 REFINEMENT_SIZE = DIAMETER
-REFINEMENT_DOWNSTREAM_SIZE = 4*DIAMETER
-REFINEMENT_MESH_SIZE = DIAMETER/8
+REFINEMENT_DOWNSTREAM_SIZE = 10*DIAMETER
+REFINEMENT_MESH_SIZE = DIAMETER/12
 
 def mesh(cylinders_pos, out_path):
    """
@@ -114,7 +114,8 @@ V_SETUP_D = Config(cyl_pos, "meshes/cyl_v_setup_d.msh")
 
 def run():
 
-   to_run = [LINE_1, LINE_6, V_SETUP_B, V_SETUP_D]
+   # to_run = [LINE_1, LINE_6, V_SETUP_B, V_SETUP_D]
+   # to_run = [LINE_1]
 
    for config in to_run:
       mesh(config.cyl_pos, config.path)
