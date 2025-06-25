@@ -433,3 +433,18 @@ def apply_fields(fields):
    gmsh.model.mesh.field.setNumbers(field, "FieldsList", fields)
    gmsh.model.mesh.field.setAsBackgroundMesh(field)
 
+class Config:
+   """
+   A class to represent the config for multiple cylinders
+   ...
+
+   Attributes
+   ----------
+   cyl_pos : [(x, y)]
+      positions of the cylinders, the first one should be in (0, 0), you should not exceed 20*D for x (no negative x is recommanded) and 20*D for abs(y)
+   path : str
+      file for the export of the mesh
+   """
+   def __init__(self, cyl_pos, path):
+      self.cyl_pos = cyl_pos
+      self.path = path
