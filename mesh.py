@@ -114,7 +114,7 @@ V_SETUP_D = Config(cyl_pos, "meshes/cyl_v_setup_d.msh")
 
 def run():
 
-   # to_run = [LINE_1, LINE_6, V_SETUP_B, V_SETUP_D]
+   to_run = [LINE_1, LINE_6, V_SETUP_B, V_SETUP_D]
    # to_run = [LINE_1]
 
    for config in to_run:
