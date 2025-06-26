@@ -1,5 +1,5 @@
 import gmsh
-from geometry_def import (Circle, PlaneSurface, Rectangle, Point, add_refinement_zone, apply_fields, Config)
+from geometry_def import (Circle, PlaneSurface, Rectangle, Point, add_refinement_zone, apply_fields, Config, Params, RunMeshConfig)
 
 def mesh(cylinders_pos, out_path, params):
    """
@@ -19,20 +19,20 @@ def mesh(cylinders_pos, out_path, params):
    gmsh.clear()
 
    # External domain
-   total_length = params.UPSTREAM_DIST + params.DOWNSTREAM_DIST
-   xc = total_length/2 - params.UPSTREAM_DIST
-   ext_domain = Rectangle(xc, 0, total_length, params.HEIGHT, mesh_size=params.GLOBAL_MESH_SIZE)
+   total_length = params.length_upstream + params.length_downstream
+   xc = total_length/2 - params.length_upstream
+   ext_domain = Rectangle(xc, 0, total_length, params.height, mesh_size=params.global_mesh_size)
 
    # Cylinders and refinement around them
    circles = []
-   total_length = params.REFINEMENT_DOWNSTREAM_SIZE + params.REFINEMENT_SIZE
+   total_length = params.length_refinement + params.length_refinement_downstream
    fields = []
    for pos in cylinders_pos:
-      circles.append(Circle(pos[0], pos[1], params.DIAMETER, params.N_POINTS_CYL))
-      xc = total_length/2 - params.REFINEMENT_SIZE + pos[0]
+      circles.append(Circle(pos[0], pos[1], params.diameter, params.n_points_cyl))
+      xc = total_length/2 - params.length_refinement + pos[0]
       yc = pos[1]
       # The fields need to be applied later
-      fields.append(add_refinement_zone(xc, yc, total_length, params.REFINEMENT_SIZE*2, params.REFINEMENT_MESH_SIZE, params.GLOBAL_MESH_SIZE))
+      fields.append(add_refinement_zone(xc, yc, total_length, params.length_refinement*2, params.refined_mesh_size, params.global_mesh_size))
    apply_fields(fields)
    gmsh.model.occ.synchronize()
 
@@ -62,11 +62,10 @@ def mesh(cylinders_pos, out_path, params):
    # Mesh file name and output
    gmsh.finalize()
 
-def run(params):
-
-   for config in params.to_run:
-      mesh(config.cyl_pos, config.path, params)
+def run(run_mesh_config: RunMeshConfig):
+   for config_param in run_mesh_config:
+      mesh(config_param[0].cyl_pos, config_param[0].path, config_param[1])
 
 if __name__ == "__main__":
-   import params
-   run(params)
+   import run_mesh_config
+   run(run_mesh_config.to_run)

@@ -448,3 +448,38 @@ class Config:
    def __init__(self, cyl_pos, path):
       self.cyl_pos = cyl_pos
       self.path = path
+
+class Params:
+   """
+   # Cylinder
+   DIAMETER = 0.01
+   N_POINTS_CYL = 50
+
+   # Bounding box
+   HEIGHT = 52*DIAMETER
+   LENGTH_UPSTREAM = 10*DIAMETER
+   LENGTH_DOWNSTREAM = 46*DIAMETER
+   GLOBAL_MESH_SIZE = DIAMETER*2
+
+   # Refinement zone around the cylinder
+   LENGTH_REFINEMENT = DIAMETER
+   LENGTH_REFINEMENT_DOWNSTREAM = 4*DIAMETER
+   REFINED_MESH_SIZE = DIAMETER/12
+   """
+   def __init__(self, diameter, n_points_cyl, height, length_upstream, length_downstream, global_mesh_size, length_refinement, length_refinement_downstream, refined_mesh_size):
+      self.diameter = diameter
+      self.n_points_cyl = n_points_cyl
+      self.height = height
+      self.length_upstream = length_upstream
+      self.length_downstream = length_downstream
+      self.global_mesh_size = global_mesh_size
+      self.length_refinement = length_refinement
+      self.length_refinement_downstream = length_refinement_downstream
+      self.refined_mesh_size = refined_mesh_size
+
+class RunMeshConfig:
+   """
+   configs_params_array: array of tuple: [(Config, Params)]
+   """
+   def __init__(configs_params_array):
+      self.configs_params_array = configs_params_array
