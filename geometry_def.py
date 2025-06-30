@@ -186,7 +186,7 @@ class Circle:
         self.dim = 1
 
         # create a structured arcCricle to merge in one curveloop
-        self.distribution = n_points
+        self.distribution = int(n_points*2.*np.pi)
         self.arcCircle_list = [
             gmsh.model.occ.addCircle(
                 self.xc,
