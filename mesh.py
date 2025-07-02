@@ -16,6 +16,7 @@ def mesh(cylinders_pos, out_path, params):
 
    # Generate Geometry
    gmsh.initialize()
+   gmsh.option.setNumber('General.Terminal', 0)
    gmsh.clear()
 
    # External domain
@@ -64,7 +65,9 @@ def mesh(cylinders_pos, out_path, params):
 
 def run(run_mesh_config: RunMeshConfig):
    for config_param in run_mesh_config:
+      print("-> Starting to mesh: " + config_param[0].path)
       mesh(config_param[0].cyl_pos, config_param[0].path, config_param[1])
+      print("-> Done meshing: " + config_param[0].path)
 
 if __name__ == "__main__":
    import run_mesh_config
