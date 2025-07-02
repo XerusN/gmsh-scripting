@@ -34,6 +34,7 @@ def mesh(cylinders_pos, out_path, params):
       yc = pos[1]
       # The fields need to be applied later
       fields.append(add_refinement_zone(xc, yc, total_length, params.length_refinement*2, params.refined_mesh_size, params.global_mesh_size))
+      fields.append(add_refinement_zone(pos[0], pos[1], 1.1*params.diameter, 1.1*params.diameter, params.diameter/params.n_points_cyl, params.global_mesh_size))
    apply_fields(fields)
    gmsh.model.occ.synchronize()
 
