@@ -467,14 +467,14 @@ def threshold(xc, yc, dist_min, dist_max, mesh_size_in, mesh_size_out):
 def custom_distance(xc, yc, dist_min, dist_max, mesh_size_in, mesh_size_out, global_mesh_size):
    expr_field = gmsh.model.mesh.field.add("MathEval")
    if xc >= 0 and yc >= 0:
-      expr = "(sqrt((x - {})^2 + (y - {})^2) - {})/{}*({}) + {}".format(xc, yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
+      expr = "((sqrt((x - {})^2 + (y - {})^2) - {})/{})*({}) + {}".format(xc, yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
    elif xc < 0 and yc >= 0:
       expr = "(sqrt((x + {})^2 + (y - {})^2) - {})/{}*({}) + {}".format(-xc, yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
    elif xc < 0 and yc < 0:
       expr = "(sqrt((x + {})^2 + (y + {})^2) - {})/{}*({}) + {}".format(-xc, -yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
    elif xc >= 0 and yc < 0:
       expr = "(sqrt((x - {})^2 + (y + {})^2) - {})/{}*({}) + {}".format(xc, -yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
-   print(expr)
+   # print(expr)
    gmsh.model.mesh.field.setString(expr_field, "F",  expr)
    field = gmsh.model.mesh.field.add("Threshold")
    gmsh.model.mesh.field.setNumber(field, "DistMin",  mesh_size_out*0.998)
