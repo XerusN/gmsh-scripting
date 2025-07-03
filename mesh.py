@@ -1,5 +1,5 @@
 import gmsh
-from geometry_def import (Circle, PlaneSurface, Rectangle, Point, add_refinement_zone, apply_fields, Config, Params, RunMeshConfig)
+from geometry_def import (Circle, PlaneSurface, Rectangle, Point, add_refinement_zone_rect, add_refinement_zone_cyl, extend_from_circle, apply_fields, custom_distance, threshold, Config, Params, RunMeshConfig)
 
 def mesh(cylinders_pos, out_path, params):
    """
@@ -33,9 +33,12 @@ def mesh(cylinders_pos, out_path, params):
       xc = total_length/2 - params.length_refinement + pos[0]
       yc = pos[1]
       # The fields need to be applied later
-      fields.append(add_refinement_zone(xc, yc, total_length, params.length_refinement*2, params.refined_mesh_size, params.global_mesh_size))
-      fields.append(add_refinement_zone(pos[0], pos[1], 1.1*params.diameter, 1.1*params.diameter, params.diameter/params.n_points_cyl, params.global_mesh_size))
-   apply_fields(fields)
+      fields.append(add_refinement_zone_rect(xc, yc, total_length, params.length_refinement*2, params.refined_mesh_size, params.global_mesh_size))
+      # 1.02 to prevent mesh size from being lower to actual edges along the cylinder due to curvature, it would double the number of edges
+      # fields.append(add_refinement_zone_cyl(pos[0], pos[1], 1.2*params.diameter, params.diameter/params.n_points_cyl*1.02, params.global_mesh_size))
+      #fields.append(threshold(circles[-1].xc, circles[-1].yc, 0., params.diameter/2.*2., params.diameter/params.n_points_cyl*1.02, params.refined_mesh_size))
+      fields.append(custom_distance(circles[-1].xc, circles[-1].yc, params.diameter/2, params.diameter/2.*1.5, params.diameter/params.n_points_cyl*1.02, params.refined_mesh_size, params.global_mesh_size))
+      
    gmsh.model.occ.synchronize()
 
    # Surface generation
@@ -51,9 +54,15 @@ def mesh(cylinders_pos, out_path, params):
       circle.define_bc('cyl'+str(i))
    surface_domain.define_bc()
    gmsh.model.occ.synchronize()
+      
+   apply_fields(fields)
+
+   # gmsh.option.setNumber("Mesh.Smoothing", 10)
 
    # Generate mesh
    gmsh.model.mesh.generate(2)
+
+   gmsh.model.mesh
 
    # Output
    gmsh.write(out_path)
