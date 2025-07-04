@@ -38,7 +38,7 @@ def mesh(cylinders_pos, out_path, params):
       # fields.append(add_refinement_zone_cyl(pos[0], pos[1], 1.2*params.diameter, params.diameter/params.n_points_cyl*1.02, params.global_mesh_size))
       #fields.append(threshold(circles[-1].xc, circles[-1].yc, 0., params.diameter/2.*2., params.diameter/params.n_points_cyl*1.02, params.refined_mesh_size))
       const_dist = params.diameter/2.*1.1
-      dist_total = params.diameter/2.*1.7
+      dist_total = params.diameter/2.*2.
       fields.append(custom_distance(circles[-1].xc, circles[-1].yc, params.diameter/2, const_dist, params.diameter/params.n_points_cyl*1.02, params.diameter/params.n_points_cyl*1.05, params.global_mesh_size))
       fields.append(custom_distance(circles[-1].xc, circles[-1].yc, params.diameter/2, dist_total, params.diameter/params.n_points_cyl*1.02, params.refined_mesh_size, params.global_mesh_size))
       
