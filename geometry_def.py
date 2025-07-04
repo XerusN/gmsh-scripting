@@ -428,46 +428,10 @@ def add_refinement_zone_rect(xc, yc, length, height, mesh_size, mesh_size_out):
    gmsh.model.occ.synchronize()
    return field
 
-def add_refinement_zone_cyl(xc, yc, diameter, mesh_size, mesh_size_out):
-   field = gmsh.model.mesh.field.add("Cylinder")
-   gmsh.model.mesh.field.setNumber(field, "Radius",  diameter/2.)
-   gmsh.model.mesh.field.setNumber(field, "VIn", mesh_size)
-   gmsh.model.mesh.field.setNumber(field, "VOut", mesh_size_out)
-   gmsh.model.mesh.field.setNumber(field, "XCenter", xc)
-   gmsh.model.mesh.field.setNumber(field, "YCenter", yc)
-   # gmsh.model.mesh.field.setNumber(field, "ZCenter", 2.5)
-   gmsh.model.mesh.field.setNumber(field, "XAxis", 0)
-   gmsh.model.mesh.field.setNumber(field, "YAxis", 0)
-   # gmsh.model.mesh.field.setNumber(field, "ZAxis", 5)
-   return field
-
-def extend_from_circle(circle, dist, mesh_size_in, mesh_size_out):
-   for curve in circle.arcCircle_list:
-      gmsh.model.mesh.setSize(gmsh.model.getEntities(curve), mesh_size_in)
-   field = gmsh.model.mesh.field.add("Extend")
-   gmsh.model.mesh.field.setNumbers(field, "CurvesList", circle.arcCircle_list)
-   gmsh.model.mesh.field.setNumber(field, "DistMax",  dist)
-   gmsh.model.mesh.field.setNumber(field, "Power", 1)
-   gmsh.model.mesh.field.setNumber(field, "SizeMax", mesh_size_out)
-   return field
-
-def threshold(xc, yc, dist_min, dist_max, mesh_size_in, mesh_size_out):
-   distance = field = gmsh.model.mesh.field.add("Distance")
-   center = gmsh.model.occ.addPoint(xc, yc, 0, mesh_size_in)
-   gmsh.model.mesh.field.setNumbers(distance, "PointsList", [center])
-   field = gmsh.model.mesh.field.add("Threshold")
-   gmsh.model.mesh.field.setNumber(field, "DistMin",  dist_max)
-   gmsh.model.mesh.field.setNumber(field, "DistMax", dist_max)
-   gmsh.model.mesh.field.setNumber(field, "StopAtDistMax", dist_max*1.1)
-   gmsh.model.mesh.field.setNumber(field, "SizeMin", mesh_size_in)
-   gmsh.model.mesh.field.setNumber(field, "SizeMax", mesh_size_out)
-   gmsh.model.mesh.field.setNumber(field, "InField", distance)
-   return field
-
 def custom_distance(xc, yc, dist_min, dist_max, mesh_size_in, mesh_size_out, global_mesh_size):
    expr_field = gmsh.model.mesh.field.add("MathEval")
    if xc >= 0 and yc >= 0:
-      expr = "((sqrt((x - {})^2 + (y - {})^2) - {})/{})*({}) + {}".format(xc, yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
+      expr = "((sqrt((x - {})^2 + (y - {})^2) - {})/{})^2*({}) + {}".format(xc, yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
    elif xc < 0 and yc >= 0:
       expr = "(sqrt((x + {})^2 + (y - {})^2) - {})/{}*({}) + {}".format(-xc, yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
    elif xc < 0 and yc < 0:
