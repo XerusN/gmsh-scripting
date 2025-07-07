@@ -433,11 +433,11 @@ def custom_distance(xc, yc, dist_min, dist_max, mesh_size_in, mesh_size_out, glo
    if xc >= 0 and yc >= 0:
       expr = "((sqrt((x - {})^2 + (y - {})^2) - {})/{})^2*({}) + {}".format(xc, yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
    elif xc < 0 and yc >= 0:
-      expr = "(sqrt((x + {})^2 + (y - {})^2) - {})/{}*({}) + {}".format(-xc, yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
+      expr = "((sqrt((x + {})^2 + (y - {})^2) - {})/{})^2*({}) + {}".format(-xc, yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
    elif xc < 0 and yc < 0:
-      expr = "(sqrt((x + {})^2 + (y + {})^2) - {})/{}*({}) + {}".format(-xc, -yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
+      expr = "((sqrt((x + {})^2 + (y + {})^2) - {})/{})^2*({}) + {}".format(-xc, -yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
    elif xc >= 0 and yc < 0:
-      expr = "(sqrt((x - {})^2 + (y + {})^2) - {})/{}*({}) + {}".format(xc, -yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
+      expr = "((sqrt((x - {})^2 + (y + {})^2) - {})/{})^2*({}) + {}".format(xc, -yc, dist_min, dist_max - dist_min, mesh_size_out - mesh_size_in, mesh_size_in)
    # print(expr)
    gmsh.model.mesh.field.setString(expr_field, "F",  expr)
    field = gmsh.model.mesh.field.add("Threshold")
@@ -450,6 +450,20 @@ def custom_distance(xc, yc, dist_min, dist_max, mesh_size_in, mesh_size_out, glo
    gmsh.model.mesh.field.setNumbers(field_max, "FieldsList", [expr_field, field])
    gmsh.model.mesh.field.setAsBackgroundMesh(field_max)
    return field_max
+
+def sigmoid_transition(xc, yc, dist_min, dist_max, mesh_size_in, mesh_size_out):
+   distance = gmsh.model.mesh.field.add("Distance")
+   center = gmsh.model.occ.addPoint(xc, yc, 0, mesh_size_in)
+   gmsh.model.mesh.field.setNumbers(distance, "PointsList", [center])
+   field = gmsh.model.mesh.field.add("Threshold")
+   gmsh.model.mesh.field.setNumber(field, "DistMin",  dist_min)
+   gmsh.model.mesh.field.setNumber(field, "DistMax", dist_max)
+   gmsh.model.mesh.field.setNumber(field, "StopAtDistMax", 1)
+   gmsh.model.mesh.field.setNumber(field, "Sigmoid", 1)
+   gmsh.model.mesh.field.setNumber(field, "SizeMin", mesh_size_in)
+   gmsh.model.mesh.field.setNumber(field, "SizeMax", mesh_size_out)
+   gmsh.model.mesh.field.setNumber(field, "InField", distance)
+   return field
 
 def apply_fields(fields):
    field = gmsh.model.mesh.field.add("Min")

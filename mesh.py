@@ -1,5 +1,5 @@
 import gmsh
-from geometry_def import (Circle, PlaneSurface, Rectangle, Point, add_refinement_zone_rect, apply_fields, custom_distance, Config, Params, RunMeshConfig)
+from geometry_def import (Circle, PlaneSurface, Rectangle, Point, add_refinement_zone_rect, apply_fields, custom_distance, Config, Params, RunMeshConfig, sigmoid_transition)
 
 def mesh(cylinders_pos, out_path, params):
    """
@@ -40,7 +40,8 @@ def mesh(cylinders_pos, out_path, params):
       const_dist = params.diameter/2.*1.1
       dist_total = params.diameter/2.*2.
       fields.append(custom_distance(circles[-1].xc, circles[-1].yc, params.diameter/2, const_dist, params.diameter/params.n_points_cyl*1.02, params.diameter/params.n_points_cyl*1.05, params.global_mesh_size))
-      fields.append(custom_distance(circles[-1].xc, circles[-1].yc, params.diameter/2, dist_total, params.diameter/params.n_points_cyl*1.02, params.refined_mesh_size, params.global_mesh_size))
+      # fields.append(sigmoid_transition(circles[-1].xc, circles[-1].yc, const_dist*0.99, dist_total, params.diameter/params.n_points_cyl*1.05, params.refined_mesh_size))
+      fields.append(custom_distance(circles[-1].xc, circles[-1].yc, const_dist*0.99, dist_total, params.diameter/params.n_points_cyl*1.05, params.refined_mesh_size, params.global_mesh_size))
       
    gmsh.model.occ.synchronize()
 
@@ -60,7 +61,7 @@ def mesh(cylinders_pos, out_path, params):
       
    apply_fields(fields)
 
-   # gmsh.option.setNumber("Mesh.Smoothing", 10)
+   # gmsh.option.setNumber("Mesh.Smoothing", 100)
 
    # Generate mesh
    gmsh.model.mesh.generate(2)
