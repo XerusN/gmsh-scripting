@@ -416,9 +416,9 @@ class PlaneSurface:
         self.ps = gmsh.model.addPhysicalGroup(self.dim, [self.tag])
         gmsh.model.setPhysicalName(self.dim, self.ps, "fluid")
 
-def add_refinement_zone_rect(xc, yc, length, height, mesh_size, mesh_size_out, thickness):
+def add_refinement_zone_rect(xc, yc, length, height, mesh_size_in, mesh_size_out, thickness):
    field = gmsh.model.mesh.field.add("Box")
-   gmsh.model.mesh.field.setNumber(field, "VIn", mesh_size)
+   gmsh.model.mesh.field.setNumber(field, "VIn", mesh_size_in)
    gmsh.model.mesh.field.setNumber(field, "VOut", mesh_size_out)
    gmsh.model.mesh.field.setNumber(field, "XMin", xc - length/2)
    gmsh.model.mesh.field.setNumber(field, "XMax", xc + length/2)
@@ -469,6 +469,7 @@ def apply_fields(fields):
    field = gmsh.model.mesh.field.add("Min")
    gmsh.model.mesh.field.setNumbers(field, "FieldsList", fields)
    gmsh.model.mesh.field.setAsBackgroundMesh(field)
+   print("The final field is ", field)
 
 class Config:
    """
